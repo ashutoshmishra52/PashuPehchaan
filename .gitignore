@@ -1,0 +1,27 @@
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Secrets / env (never commit)
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local caches
+.cache/
+*.log

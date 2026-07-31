@@ -1,0 +1,11 @@
+{
+  "name": "pashupehchaan",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Image Based Breed Recognition for Cattle and Buffaloes of India",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "dev": "node scripts/dev.js",
+    "start": "node scripts/dev.js"
+  }
+}

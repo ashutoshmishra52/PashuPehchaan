@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PashuPehchaan — Cattle & Buffalo Breed Recognition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="top" id="topbar">
+    <a class="logo" href="/">PashuPehchaan</a>
+    <nav>
+      <a href="#recognize">Recognize</a>
+      <a href="#breeds">Breeds</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="recognize">
+      <div class="hero-media" aria-hidden="true">
+        <img src="/static/hero-cow.jpg" alt="" class="hero-photo" />
+        <div class="hero-shade"></div>
+      </div>
+      <div class="hero-inner">
+        <p class="brand reveal">PashuPehchaan</p>
+        <h1 class="reveal d1">Know the breed from a photo</h1>
+        <p class="lede reveal d2">Upload an image of Indian cattle or buffalo — get breed, milk yield, region, and usage in seconds.</p>
+
+        <form id="upload-form" class="upload reveal d3" enctype="multipart/form-data">
+          <label class="drop" id="dropzone" for="file-input">
+            <input type="file" id="file-input" name="file" accept="image/jpeg,image/png,image/webp,image/bmp" hidden />
+            <div class="drop-idle" id="drop-idle">
+              <span class="drop-icon" aria-hidden="true"></span>
+              <span class="drop-title">Drop a photo here, or browse</span>
+              <span class="drop-hint">JPG, PNG, WEBP · max 8 MB</span>
+            </div>
+            <div class="drop-ready" id="drop-ready" hidden>
+              <img id="preview" alt="" />
+              <div class="drop-ready-meta">
+                <span class="drop-filename" id="file-name"></span>
+                <span class="drop-change">Click to change</span>
+              </div>
+            </div>
+          </label>
+          <div class="actions" id="actions" hidden>
+            <button type="submit" class="btn" id="predict-btn">
+              <span class="btn-label">Identify breed</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn ghost" id="clear-btn">Clear</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div class="toast" id="status" hidden role="status">
+      <p id="status-text"></p>
+    </div>
+
+    <section class="result" id="result" hidden>
+      <div class="result-panel">
+        <div class="result-visual">
+          <img id="result-upload" alt="Your upload" />
+        </div>
+        <div class="result-copy">
+          <p class="eyebrow">Match found</p>
+          <h2 id="breed-name">—</h2>
+          <p class="meta" id="breed-meta"></p>
+          <div class="confidence">
+            <div class="confidence-track"><span id="conf-fill"></span></div>
+            <span id="conf-label">0%</span>
+          </div>
+          <p class="desc" id="breed-desc"></p>
+          <dl class="facts" id="breed-facts"></dl>
+          <div class="alts" id="alts"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="breeds-section" id="breeds">
+      <div class="section-head">
+        <div>
+          <h2>Breed library</h2>
+          <p class="section-lede">Cattle and buffalo breeds commonly found across India.</p>
+        </div>
+        <div class="filters" role="tablist" aria-label="Filter breeds">
+          <button type="button" class="filter is-active" data-filter="all">All</button>
+          <button type="button" class="filter" data-filter="Cattle">Cattle</button>
+          <button type="button" class="filter" data-filter="Buffalo">Buffalo</button>
+        </div>
+      </div>
+      <div class="breed-grid" id="breed-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="foot-brand">PashuPehchaan</div>
+    <p>Image Based Breed Recognition for Cattle and Buffaloes of India</p>
+    <p class="fine">Vidya Vihar Institute of Technology · BCA Project</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
