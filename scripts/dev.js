@@ -1,10 +1,21 @@
 const { spawn, spawnSync } = require("child_process");
 const fs = require("fs");
+const path = require("path");
 const { pythonBin, root, venvDir } = require("./python");
 
 function ensureReady() {
-  if (!fs.existsSync(venvDir) || !fs.existsSync(pythonBin())) {
-    console.log("→ First run: setting up environment…");
+  const py = fs.existsSync(venvDir) ? pythonBin() : "";
+  const needSetup =
+    !fs.existsSync(venvDir) ||
+    !py ||
+    !fs.existsSync(py) ||
+    spawnSync(py, ["-c", "import fastapi, uvicorn, torch, timm, PIL"], {
+      cwd: root,
+      encoding: "utf8",
+    }).status !== 0;
+
+  if (needSetup) {
+    console.log("→ First run / missing deps: setting up environment…");
     const setup = spawnSync(process.execPath, [require.resolve("./setup.js")], {
       cwd: root,
       stdio: "inherit",

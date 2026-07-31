@@ -52,18 +52,50 @@ def preload() -> None:
     _ensure_model()
 
 
+def _is_lfs_pointer(path: Path) -> bool:
+    """True when Git LFS was not pulled and only a tiny pointer file exists."""
+    try:
+        if path.stat().st_size > 2048:
+            return False
+        head = path.read_text(encoding="utf-8", errors="ignore")[:200]
+        return "git-lfs.github.com" in head or head.startswith("version https://")
+    except OSError:
+        return False
+
+
 def _resolve_artifact(filename: str) -> Path:
     """Prefer project-local copy, then Hugging Face cache / download."""
     local = Path(__file__).resolve().parent.parent / "models" / filename
-    if local.exists():
+    if local.exists() and not _is_lfs_pointer(local):
         return local
+
+    if local.exists() and _is_lfs_pointer(local):
+        logger.warning(
+            "%s looks like a Git LFS pointer (run: git lfs pull). "
+            "Downloading model from Hugging Face instead…",
+            filename,
+        )
 
     from huggingface_hub import hf_hub_download
 
     try:
         path = hf_hub_download(HF_REPO, filename, local_files_only=True)
     except Exception:
+        logger.info("Downloading %s from Hugging Face…", filename)
         path = hf_hub_download(HF_REPO, filename)
+
+    # Cache into models/ for next run
+    try:
+        dest = local
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if Path(path).resolve() != dest.resolve():
+            import shutil
+
+            shutil.copy2(path, dest)
+            return dest
+    except OSError as exc:
+        logger.warning("Could not cache model locally: %s", exc)
+
     return Path(path)
 
 
@@ -89,7 +121,7 @@ def _ensure_model():
             with open(classes_path, encoding="utf-8") as f:
                 _classes = json.load(f)
 
-            ckpt = torch.load(weights_path, map_location="cpu")
+            ckpt = torch.load(weights_path, map_location="cpu", weights_only=False)
             if isinstance(ckpt, dict) and "classes" in ckpt and ckpt["classes"]:
                 _classes = list(ckpt["classes"])
             state = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
